@@ -89,7 +89,11 @@ class DataLoader:
         """
         Load data from SPGMICIQ API
         
-        Note: This requires valid API credentials from S&P Global
+        Note: This requires valid API credentials from S&P Global.
+        If credentials are not configured, returns simulated data for demonstration purposes.
+        
+        Returns:
+            DataFrame with OHLCV data (simulated if credentials unavailable)
         """
         logger.info("Attempting to load data from SPGMICIQ API")
         
