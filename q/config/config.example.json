@@ -1,0 +1,41 @@
+{
+  "capital_iq": {
+    "username": "",
+    "password": "",
+    "api_key": "",
+    "comment": "Fill in your Capital IQ Pro credentials here"
+  },
+  "ibkr": {
+    "host": "127.0.0.1",
+    "port": 7497,
+    "client_id": 1,
+    "comment": "7497 = paper trading, 7496 = live trading"
+  },
+  "scanner": {
+    "min_catalyst_score": 60.0,
+    "min_rvol": 2.0,
+    "min_imbalance": 1.5,
+    "rvol_spike_threshold": 3.0,
+    "surge_threshold": 0.15,
+    "comment": "Adjust these thresholds based on backtesting results"
+  },
+  "watchlist": {
+    "max_size": 50,
+    "refresh_time": "08:00:00",
+    "comment": "Watchlist refreshes daily at this time (HH:MM:SS)"
+  },
+  "data": {
+    "directory": "./data/historical",
+    "lookback_years": 2,
+    "comment": "Path to historical flat files for backtesting"
+  },
+  "execution": {
+    "dry_run": true,
+    "default_position_size": 100,
+    "comment": "Set dry_run to false for live trading (use with caution!)"
+  },
+  "logging": {
+    "level": "INFO",
+    "comment": "Options: DEBUG, INFO, WARNING, ERROR, CRITICAL"
+  }
+}
