@@ -1,8 +1,8 @@
 # Quantitative Research Portfolio
 
-**Professional-Grade Volatility Analysis Using SPGMICIQ**
+**Professional-Grade Volatility Analysis & Stock Surge Detection Using SPGMICIQ**
 
-A comprehensive quantitative research platform designed with Capital IQ Pro aesthetic principles, featuring advanced volatility metrics, high-density data visualizations, and institutional-grade analytics.
+A comprehensive quantitative research platform designed with Capital IQ Pro aesthetic principles, featuring advanced volatility metrics, high-density data visualizations, institutional-grade analytics, and a sophisticated **stock surge detection system**.
 
 ---
 
@@ -15,7 +15,47 @@ This project implements a professional quantitative research portfolio that:
 - **Capital IQ Pro Aesthetic**: Clean, monochromatic visualizations with high information density
 - **Professional Logging**: Comprehensive logging system for production-grade applications
 - **Risk Analysis**: VaR, CVaR, and cross-asset correlation analysis
+- **🆕 Stock Surge Listener**: Real-time system to detect surges before they happen (see [`q/`](q/) directory)
 - **Comprehensive Documentation**: Including limitations discussion for non-US markets
+
+---
+
+## 🚀 NEW: Stock Surge Listener System
+
+The **`q/` directory** contains a powerhouse listener system that detects stock surges **before they happen** by combining:
+
+- **Capital IQ Pro** for deep fundamental analysis (catalysts, earnings revisions, key developments)
+- **Historical flat files** for pattern backtesting and regression models
+- **IBKR Pro TWS API** for real-time monitoring and execution
+
+### Key Features
+
+✅ **Signal Layer**: Identifies fundamental catalysts that create surge potential  
+✅ **Monitoring Layer**: Real-time RVOL spikes, order book imbalances, price action  
+✅ **Scanner Logic**: Combines all signals → `IF (Catalyst + Volume + OrderBook + Price) THEN BUY`  
+✅ **Daily Watchlist Refresh**: Automatically narrows 5,000 stocks to top 50 candidates  
+✅ **Production-Ready**: Dry-run mode, position sizing, comprehensive logging  
+
+**See [`q/README.md`](q/README.md) for complete documentation and usage examples.**
+
+### Quick Start (Listener System)
+
+```bash
+# Install dependencies (includes ib_insync for IBKR)
+pip install -r requirements.txt
+
+# Configure credentials (optional for demo)
+export CAPITAL_IQ_USERNAME="your_username"
+export CAPITAL_IQ_PASSWORD="your_password"
+export IBKR_PORT="7497"  # Paper trading
+
+# Run the listener
+cd q
+python listener.py
+
+# Or run examples
+python examples.py
+```
 
 ---
 
@@ -130,12 +170,29 @@ research_quant/
 │       └── utils/
 │           ├── __init__.py
 │           └── logger.py           # Professional logging
+├── q/                              # 🆕 Stock Surge Listener System
+│   ├── signal_layer/              # Capital IQ + Flat File analysis
+│   │   ├── capital_iq_scanner.py
+│   │   ├── earnings_revision_detector.py
+│   │   ├── key_developments_monitor.py
+│   │   └── flat_file_backtester.py
+│   ├── monitoring_layer/          # IBKR real-time monitoring
+│   │   ├── ibkr_connector.py
+│   │   ├── rvol_detector.py
+│   │   ├── order_book_analyzer.py
+│   │   └── scanner.py
+│   ├── config/                    # Configuration management
+│   ├── utils/                     # Utilities for listener
+│   ├── listener.py                # Main orchestrator
+│   ├── examples.py                # Usage examples
+│   ├── test_listener.py           # Comprehensive tests
+│   └── README.md                  # Listener documentation
 ├── examples/
 │   └── output/                     # Generated charts and reports
 ├── tests/                          # Unit tests
-├── main.py                         # Main analysis script
-├── requirements.txt                # Dependencies
-└── README.md                       # Documentation
+├── main.py                         # Main volatility analysis script
+├── requirements.txt                # Dependencies (includes ib_insync)
+└── README.md                       # This file
 ```
 
 ---
@@ -295,8 +352,38 @@ fig = viz.create_correlation_matrix(returns_df)
 
 ---
 
+## 🔗 Integrating Volatility Analysis with Surge Detection
+
+The volatility analysis tools and surge listener work together seamlessly:
+
+```python
+from research_quant.analysis import DataLoader, VolatilityMetrics
+from q.signal_layer import FlatFileBacktester
+from q.listener import SurgeListener
+
+# 1. Use volatility analysis to identify high-volatility candidates
+data_loader = DataLoader(use_spgmiciq=True)
+data = data_loader.load_historical_data(['FSLY', 'NET'], '2023-01-01', '2024-01-01')
+
+vol_metrics = VolatilityMetrics(data['close'])
+high_vol_stocks = vol_metrics.get_all_metrics(window=20)
+
+# 2. Backtest these stocks for surge patterns
+backtester = FlatFileBacktester()
+patterns = backtester.analyze_pre_surge_patterns('FSLY', lookback_years=2)
+
+# 3. Monitor in real-time with the listener
+listener = SurgeListener(universe=['FSLY', 'NET'])
+listener.run_continuous(scan_interval_minutes=5)
+```
+
+**Use Case**: First identify high-volatility stocks, then use the backtester to find pre-surge patterns, and finally monitor them in real-time for actual surge signals.
+
+---
+
 ## 📚 Dependencies
 
+### Core Libraries
 - **spgmiciq** (>=3.0.0): S&P Capital IQ API Client
 - **pandas** (>=1.5.0): Data manipulation
 - **numpy** (>=1.23.0): Numerical computing
@@ -305,6 +392,10 @@ fig = viz.create_correlation_matrix(returns_df)
 - **scipy** (>=1.9.0): Scientific computing
 - **yfinance** (>=0.2.0): Fallback data source
 - **tabulate** (>=0.9.0): Table formatting
+- **colorama** (>=0.4.6): Colored terminal output
+
+### Surge Listener (q/ directory)
+- **ib_insync** (>=0.9.86): Interactive Brokers TWS API integration
 
 See `requirements.txt` for complete list.
 
@@ -373,9 +464,31 @@ Quantitative Research Team
 ## 📞 Support
 
 For questions or issues:
+- **Volatility Analysis**: Review this README and main.py documentation
+- **Surge Listener**: See [q/README.md](q/README.md) for detailed documentation
 - Open an issue on GitHub
-- Review the documentation
 - Check the limitations section
+- Review Capital IQ API and IBKR TWS API documentation
+
+---
+
+## 🌟 Highlights
+
+### Two Powerful Systems in One Repository
+
+1. **Volatility Analysis** (`src/research_quant/`)
+   - Professional-grade volatility metrics
+   - Capital IQ Pro aesthetic visualizations
+   - Institutional-quality risk analysis
+   - Perfect for research and reporting
+
+2. **Surge Detection** (`q/`)
+   - Real-time stock surge prediction
+   - Combines fundamentals + technicals + order flow
+   - Automated watchlist management
+   - Production-ready execution framework
+
+**Together**: Create a complete quantitative research and trading platform.
 
 ---
 
