@@ -193,15 +193,20 @@ class FlatFileBacktester:
         
         for surge_date in surges.index:
             # Get pre-surge data
-            end_idx = df.index.get_loc(surge_date)
-            if end_idx >= days_before:
-                start_idx = end_idx - days_before
-                pre_surge_data = df.iloc[start_idx:end_idx]
-                
-                pattern = self._extract_pattern_features(pre_surge_data)
-                pattern['surge_date'] = surge_date
-                pattern['surge_magnitude'] = surges.loc[surge_date, 'return']
-                patterns.append(pattern)
+            try:
+                # Find the index position (not exact match needed)
+                end_idx = df.index.get_indexer([surge_date], method='nearest')[0]
+                if end_idx >= days_before:
+                    start_idx = end_idx - days_before
+                    pre_surge_data = df.iloc[start_idx:end_idx]
+                    
+                    pattern = self._extract_pattern_features(pre_surge_data)
+                    pattern['surge_date'] = surge_date
+                    pattern['surge_magnitude'] = surges.loc[surge_date, 'return']
+                    patterns.append(pattern)
+            except Exception as e:
+                # Skip this surge if we can't get the data
+                continue
         
         # Aggregate patterns
         if patterns:
